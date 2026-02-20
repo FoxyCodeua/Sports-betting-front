@@ -4,12 +4,18 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { API_URL } from "@/lib/config";
 
 interface TeamLogoProps {
   src: string | null;
   name: string;
   size?: number;
   className?: string;
+}
+
+function resolveImageUrl(src: string): string {
+  if (src.startsWith("http")) return src;
+  return `${API_URL}${src}`;
 }
 
 export function TeamLogo({ src, name, size = 32, className }: TeamLogoProps) {
@@ -31,7 +37,7 @@ export function TeamLogo({ src, name, size = 32, className }: TeamLogoProps) {
 
   return (
     <Image
-      src={src}
+      src={resolveImageUrl(src)}
       alt={name}
       width={size}
       height={size}
