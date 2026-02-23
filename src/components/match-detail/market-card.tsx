@@ -87,17 +87,17 @@ export function MarketCard({ marketType, odds }: MarketCardProps) {
         </div>
 
         {chartData.length > 2 && (
-          <div className="h-40">
+          <div className="h-40 text-muted-foreground">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <XAxis
                   dataKey="time"
-                  tick={{ fontSize: 10 }}
-                  stroke="hsl(var(--muted-foreground))"
+                  tick={{ fontSize: 10, fill: "currentColor" }}
+                  stroke="currentColor"
                 />
                 <YAxis
-                  tick={{ fontSize: 10 }}
-                  stroke="hsl(var(--muted-foreground))"
+                  tick={{ fontSize: 10, fill: "currentColor" }}
+                  stroke="currentColor"
                   domain={["auto", "auto"]}
                 />
                 <RechartsTooltip
@@ -106,6 +106,7 @@ export function MarketCard({ marketType, odds }: MarketCardProps) {
                     border: "1px solid hsl(var(--border))",
                     borderRadius: "8px",
                     fontSize: 12,
+                    color: "hsl(var(--popover-foreground))",
                   }}
                 />
                 <Line

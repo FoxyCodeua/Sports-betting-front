@@ -1,4 +1,5 @@
 import { API_URL } from "@/lib/config";
+import { getStoredPassword } from "@/lib/stores/auth-store";
 
 const BASE_URL = API_URL;
 
@@ -16,8 +17,19 @@ export async function restFetch<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (path.startsWith("/api/admin")) {
+    const password = getStoredPassword();
+    if (password) {
+      headers["x-admin-password"] = password;
+    }
+  }
+
   const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
+    headers,
     ...options,
   });
 

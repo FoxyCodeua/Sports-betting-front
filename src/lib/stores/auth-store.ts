@@ -14,6 +14,12 @@ interface AuthState {
 }
 
 const AUTH_KEY = "betanalytics-auth";
+const AUTH_PASSWORD_KEY = "betanalytics-pwd";
+
+export function getStoredPassword(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem(AUTH_PASSWORD_KEY);
+}
 
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
@@ -39,6 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
 
       localStorage.setItem(AUTH_KEY, "true");
+      localStorage.setItem(AUTH_PASSWORD_KEY, password);
       set({ isAuthenticated: true, isLoading: false, error: null });
       return true;
     } catch {
@@ -49,6 +56,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(AUTH_PASSWORD_KEY);
     set({ isAuthenticated: false, error: null });
   },
 
