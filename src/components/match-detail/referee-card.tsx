@@ -24,7 +24,7 @@ export function RefereeCard({ referee }: RefereeCardProps) {
           {referee.avgYellowCards != null && (
             <div className="text-center">
               <p className="text-lg font-bold text-amber-400">
-                {referee.avgYellowCards.toFixed(1)}
+                {Number(referee.avgYellowCards).toFixed(1)}
               </p>
               <p className="text-xs text-muted-foreground">
                 Avg Yellow Cards
@@ -34,7 +34,7 @@ export function RefereeCard({ referee }: RefereeCardProps) {
           {referee.avgRedCards != null && (
             <div className="text-center">
               <p className="text-lg font-bold text-rose-400">
-                {referee.avgRedCards.toFixed(2)}
+                {Number(referee.avgRedCards).toFixed(2)}
               </p>
               <p className="text-xs text-muted-foreground">Avg Red Cards</p>
             </div>

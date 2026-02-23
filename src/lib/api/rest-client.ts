@@ -1,5 +1,5 @@
 import { API_URL } from "@/lib/config";
-import { getStoredPassword } from "@/lib/stores/auth-store";
+import { clearAuth, getStoredPassword } from "@/lib/stores/auth-store";
 
 const BASE_URL = API_URL;
 
@@ -34,6 +34,10 @@ export async function restFetch<T>(
   });
 
   if (!response.ok) {
+    if (response.status === 401 && !path.includes("/auth/")) {
+      clearAuth();
+      window.location.href = "/login";
+    }
     throw new ApiError(response.status, await response.text());
   }
 

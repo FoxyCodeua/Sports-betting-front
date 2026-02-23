@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, AlertTriangle, BrainCircuit } from "lucide-react";
+import { AlertCircle, AlertTriangle, BrainCircuit, Clock, XCircle } from "lucide-react";
 import { use } from "react";
 
 import { AnalysisSection } from "@/components/analysis/analysis-section";
@@ -8,18 +8,21 @@ import {
   ConfidenceGauge,
 } from "@/components/analysis/confidence-badge";
 import { MarkerMatchesTable } from "@/components/analysis/marker-matches-table";
+import { OddsOverviewCard } from "@/components/analysis/odds-overview-card";
 import { RecommendationsTable } from "@/components/analysis/recommendations-table";
 import { RiskIndicator } from "@/components/analysis/risk-indicator";
+import { TeamFormCard } from "@/components/analysis/team-form-card";
 import { MatchDetailHeader } from "@/components/match-detail/match-detail-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMatch } from "@/lib/hooks/use-match";
 import { useMatchAggregates } from "@/lib/hooks/use-match-aggregates";
+import { useMatchForm } from "@/lib/hooks/use-match-form";
 import { useMatchPrediction } from "@/lib/hooks/use-match-prediction";
 
 const ANALYSIS_SECTIONS = [
-  { key: "motivation" as const, title: "Team Motivation", defaultOpen: true },
+  { key: "motivation" as const, title: "Team Motivation" },
   { key: "form" as const, title: "Team Form" },
   { key: "squads" as const, title: "Squad Status" },
   { key: "markerMatches" as const, title: "Marker Matches" },
@@ -37,6 +40,7 @@ export default function AnalysisPage({
   const { data: match, isLoading: matchLoading } = useMatch(id);
   const { data: prediction, isLoading: predLoading } = useMatchPrediction(id);
   const { data: aggregates } = useMatchAggregates(id);
+  const { data: form } = useMatchForm(id);
 
   if (matchLoading || predLoading) {
     return <AnalysisSkeleton />;
@@ -62,8 +66,30 @@ export default function AnalysisPage({
           title="No prediction available"
           description="AI analysis hasn't been generated for this match yet. Predictions are generated 2 hours before kickoff."
         />
+      ) : prediction.status === "failed" ? (
+        <EmptyState
+          icon={XCircle}
+          title="Prediction generation failed"
+          description="AI analysis could not be generated for this match. It will be retried automatically."
+        />
       ) : (
         <>
+          {prediction.status === "draft" && (
+            <Card className="border-blue-500/20 bg-blue-500/5">
+              <CardContent className="flex items-center gap-3 p-4">
+                <Clock className="h-5 w-5 text-blue-400 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-blue-400">
+                    Preliminary Analysis
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    This analysis will be updated when lineups are confirmed, closer to kickoff.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {prediction.insufficientData && (
             <Card className="border-amber-500/20 bg-amber-500/5">
               <CardContent className="flex items-center gap-3 p-4">
@@ -95,22 +121,52 @@ export default function AnalysisPage({
             </div>
           </div>
 
-          {prediction.predictions?.analysis && (
-            <div className="space-y-3">
-              <h2 className="text-lg font-semibold">AI Analysis</h2>
-              {ANALYSIS_SECTIONS.map((section) => {
-                const content =
-                  prediction.predictions?.analysis[section.key];
-                if (!content) return null;
-                return (
-                  <AnalysisSection
-                    key={section.key}
-                    title={section.title}
-                    content={content}
-                    defaultOpen={section.defaultOpen}
-                  />
-                );
-              })}
+          {form && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Team Form</h2>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <TeamFormCard
+                  title={`${match.homeTeam.name} (Home)`}
+                  data={form.homeTeam}
+                />
+                <TeamFormCard
+                  title={`${match.awayTeam.name} (Away)`}
+                  data={form.awayTeam}
+                />
+              </div>
+            </div>
+          )}
+
+          {(aggregates?.markerHome || aggregates?.markerAway) && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Marker Matches</h2>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <MarkerMatchesTable
+                  title={`${match.homeTeam.name} (Home)`}
+                  data={aggregates.markerHome}
+                />
+                <MarkerMatchesTable
+                  title={`${match.awayTeam.name} (Away)`}
+                  data={aggregates.markerAway}
+                />
+              </div>
+            </div>
+          )}
+
+          {aggregates?.h2h && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Head-to-Head</h2>
+              <MarkerMatchesTable
+                title={`${match.homeTeam.name} vs ${match.awayTeam.name}`}
+                data={aggregates.h2h}
+              />
+            </div>
+          )}
+
+          {match.odds && match.odds.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold">Odds</h2>
+              <OddsOverviewCard odds={match.odds} />
             </div>
           )}
 
@@ -132,19 +188,21 @@ export default function AnalysisPage({
             </div>
           )}
 
-          {(aggregates?.markerHome || aggregates?.markerAway) && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Marker Matches</h2>
-              <div className="grid gap-4 lg:grid-cols-2">
-                <MarkerMatchesTable
-                  title={`${match.homeTeam.name} (Home)`}
-                  data={aggregates.markerHome}
-                />
-                <MarkerMatchesTable
-                  title={`${match.awayTeam.name} (Away)`}
-                  data={aggregates.markerAway}
-                />
-              </div>
+          {prediction.predictions?.analysis && (
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold">AI Analysis</h2>
+              {ANALYSIS_SECTIONS.map((section) => {
+                const content =
+                  prediction.predictions?.analysis[section.key];
+                if (!content) return null;
+                return (
+                  <AnalysisSection
+                    key={section.key}
+                    title={section.title}
+                    content={content}
+                  />
+                );
+              })}
             </div>
           )}
 

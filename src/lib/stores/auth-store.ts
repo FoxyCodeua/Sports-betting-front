@@ -21,6 +21,12 @@ export function getStoredPassword(): string | null {
   return localStorage.getItem(AUTH_PASSWORD_KEY);
 }
 
+export function clearAuth(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(AUTH_PASSWORD_KEY);
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isLoading: true,
@@ -55,8 +61,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    localStorage.removeItem(AUTH_KEY);
-    localStorage.removeItem(AUTH_PASSWORD_KEY);
+    clearAuth();
     set({ isAuthenticated: false, error: null });
   },
 

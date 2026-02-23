@@ -47,9 +47,7 @@ export function RecommendationsTable({
               {recommendations.map((rec) => (
                 <TableRow key={`${rec.market}-${rec.recommendation}`}>
                   <TableCell className="font-medium">{rec.market}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {rec.recommendation}
-                  </TableCell>
+                  <TableCell>{rec.recommendation}</TableCell>
                   <TableCell>
                     <ConfidenceBadge confidence={rec.confidence} />
                   </TableCell>

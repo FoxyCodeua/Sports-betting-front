@@ -6,7 +6,7 @@ import { restFetch } from "@/lib/api/rest-client";
 import type { PredictionResponse } from "@/types/api";
 
 export function useMatchPrediction(matchId: string) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["match-prediction", matchId] as const,
     queryFn: () =>
       restFetch<PredictionResponse | null>(
@@ -14,5 +14,12 @@ export function useMatchPrediction(matchId: string) {
       ),
     enabled: !!matchId,
     staleTime: 5 * 60_000,
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      if (!status || status === "draft" || status === "failed") return 60_000;
+      return false;
+    },
   });
+
+  return query;
 }

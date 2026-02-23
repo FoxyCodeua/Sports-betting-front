@@ -1,5 +1,6 @@
 import { CleanupSection } from "@/components/admin/cleanup-section";
 import { LeagueManagement } from "@/components/admin/league-management";
+import { ResetSection } from "@/components/admin/reset-section";
 import { SyncSection } from "@/components/admin/sync-section";
 import { Separator } from "@/components/ui/separator";
 
@@ -18,6 +19,8 @@ export default function AdminPage() {
       <SyncSection />
       <Separator className="opacity-50" />
       <CleanupSection />
+      <Separator className="opacity-50" />
+      <ResetSection />
     </div>
   );
 }

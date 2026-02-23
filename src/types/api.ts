@@ -79,7 +79,7 @@ export interface RefereeResponse {
 }
 
 export interface PredictionResponse {
-  status: "draft" | "published";
+  status: "draft" | "published" | "failed";
   predictions: DeepSeekPredictionResponse | null;
   confidence: number;
   risk: string;
@@ -112,6 +112,26 @@ export interface BetRecommendation {
   risk: string;
   bookmakerOdds?: number;
   valueBet: boolean;
+}
+
+export interface TeamFormMatch {
+  date: string;
+  opponent: string;
+  venue: "H" | "A";
+  score: string;
+  xgHome: number | null;
+  xgAway: number | null;
+  result: "W" | "D" | "L";
+}
+
+export interface TeamFormData {
+  name: string;
+  matches: TeamFormMatch[];
+}
+
+export interface FormResponse {
+  homeTeam: TeamFormData;
+  awayTeam: TeamFormData;
 }
 
 export interface CreateClickoutDto {
