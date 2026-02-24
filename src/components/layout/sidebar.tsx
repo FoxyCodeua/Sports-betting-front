@@ -5,6 +5,7 @@ import {
   Trophy,
   BrainCircuit,
   Settings,
+  SlidersHorizontal,
   X,
   Activity,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { href: "/leagues", label: "Leagues", icon: Trophy },
   { href: "/predictions", label: "Predictions", icon: BrainCircuit },
   { href: "/admin", label: "Admin", icon: Settings },
+  { href: "/settings", label: "Settings", icon: SlidersHorizontal },
 ];
 
 interface SidebarProps {

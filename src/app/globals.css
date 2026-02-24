@@ -118,6 +118,15 @@
   --sidebar-ring: oklch(0.696 0.17 162.48);
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
