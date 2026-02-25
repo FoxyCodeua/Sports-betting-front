@@ -27,7 +27,7 @@ export function TabOverview({ match, referee }: TabOverviewProps) {
         />
       </div>
 
-      {referee && referee.name && <RefereeCard referee={referee} />}
+      <RefereeCard referee={referee} />
     </div>
   );
 }
